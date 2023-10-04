@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>事务 on Wx</title>
+    <link>https://wxxxcxx.com/tags/%E4%BA%8B%E5%8A%A1/</link>
+    <description>Recent content in 事务 on Wx</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Mon, 17 Sep 2018 23:03:31 +0800</lastBuildDate><atom:link href="https://wxxxcxx.com/tags/%E4%BA%8B%E5%8A%A1/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>彻底弄懂 MySQL 事务的隔离级别</title>
+      <link>https://wxxxcxx.com/post/mysql-transaction-isolation-level/</link>
+      <pubDate>Mon, 17 Sep 2018 23:03:31 +0800</pubDate>
+      
+      <guid>https://wxxxcxx.com/post/mysql-transaction-isolation-level/</guid>
+      <description>前言 事务隔离级别是数据库管理系统中的一个重要概念，用于控制并发执行事务时的隔离程度。M选择适当的事务隔离级别对于确保数据的一致性和并发控制非常重要。根据具体的业务需求和数据库性能要求，需要综合考虑选择合适的隔离级别。
+什么是脏读、不可重复读、幻读 思考一个问题：一张表中有一条记录。事务A会对这条记录进行修改。事务B在事务A修改的过程中一直读取这条记录。那么B读到的记录回事什么样的呢？
+脏读
+当A事务修改了这条记录但是未提交时，如果B事务能够读到A修改过的记录值，这总情况就是发生的脏读。
+不可重复读
+如果B事务能够在A提交事务前读到未修改过的值，并且能在A事务提交后读取到修改过的值——两次读到的值不一致，这就是不可重复读
+幻读
+当B事务使用 select count(*) 读取一张表的时候，如果A事务对这张表进行了增加或删除，如果在B事务中读到的值不一致那么说明发生了幻读。
+MySQL 事务隔离级别 MySQL事务拥有四种隔离级别：
+读未提交（Read Uncommitted）：允许一个事务读取另一个未提交的事务所做的修改，可能导致脏读问题。 读已提交（Read Committed）：保证一个事务只能读取到已经提交的事务所做的修改，避免了脏读问题。 可重复读（Repeatable Read）：保证一个事务在执行期间多次读取同一数据时，能够得到一致的结果，避免了不可重复读问题。 串行化（Serializable）：最高隔离级别，确保并发执行的事务之间完全隔离，避免了幻读问题。 </description>
+    </item>
+    
+  </channel>
+</rss>

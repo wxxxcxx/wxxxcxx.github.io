@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/">
+  <channel>
+    <title>Wx</title>
+    <link>https://wxxxcxx.com/</link>
+    <description>Recent content on Wx</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>zh-cn</language>
+    <lastBuildDate>Fri, 04 Oct 2019 18:26:06 +0800</lastBuildDate><atom:link href="https://wxxxcxx.com/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Archlinux 更新软件包时提示签名错误的解决办法</title>
+      <link>https://wxxxcxx.com/post/archlinux-missing-required-signature/</link>
+      <pubDate>Fri, 04 Oct 2019 18:26:06 +0800</pubDate>
+      
+      <guid>https://wxxxcxx.com/post/archlinux-missing-required-signature/</guid>
+      <description>在某次更新过程中强制重启。之后发现无法更新软件包。使用 pacman -S 安装任何软件都提示如下错误：
+error: GPGME error: Invalid crypto engine error: ***: missing required signature 查找一些资料说可以通过重新安装 gpgme和 keyring解决，但是由于pacman 安装软件包时也会校验签名导致无法重新安装。
+期间折腾了好久，突然想到 pacman 好像可以通过配置文件设置是否校验软件包，试了一下果然好了。
+操作步骤 修改 SigLevel ：
+sudo vim /etc/pacman.conf 将 [core] 的 SigLevel 改为 Never并保存，如下：
+[core] SigLevel = Never #SigLevel = PackageRequired 移除无效的 key：
+sudo rm -r /etc/pacman.d/gnupg 重新安装 gnupg和 keyring：
+sudo pacman -Sy gnupg archlinux-keyring manjaro-keyring 初始化 keyring：
+sudo pacman-key --init 加载签名：
+sudo pacman-key --populate archlinux manjaro 刷新签名：
+sudo pacman-key --refresh-keys 清除已下载的包缓存：</description>
+    </item>
+    
+    <item>
+      <title>使用 Github Pages 部署静态网站</title>
+      <link>https://wxxxcxx.com/post/deploying-static-site-with-github-pages/</link>
+      <pubDate>Mon, 05 Nov 2018 11:44:15 +0800</pubDate>
+      
+      <guid>https://wxxxcxx.com/post/deploying-static-site-with-github-pages/</guid>
+      <description>之前网站部署在阿里云香港的 VPS 上，最近发现某些网络环境下HTTPS打不开网站，开始还以为是 GFW 的问题。但是测试发现 4G 网络访问正常，HTTP 也能正常访问。搜索了一番发现了很多相似的情况。问题是 SSL ClientHello 包无法获得响应导致的。使用 Wrieshick 抓包的结果也证实了这一点。这个锅先甩给运营商吧。
+目前还不知道更换证书或更换 VPS 能不能解决这个问题（感觉即使能解决也不是持久之计，有条件的同学还是备案用境内的 VPS ）。
+由于域名转入备案太麻烦，而且正巧发现 Github Pages 对自定义域名支持 HTTPS 了，所以决定吧网站迁移到 Github Pages 上。
+迁移文件 选择站点类型 GitHub Pages 站点的静态文件都保存在 Repository 中。GitHub Pages 提供了 User or organization site 和 Project site 两种方式托管静态文件。
+两种方式基本没有什么区别。由于我要部署的是个人博客，因此我选择使用 User or organization site。
+顺带说一句，GitHub Pages 是支持 Jekyll 模版语法。所以可以通过 Jekyll 来“动态”生成网站。
+创建&amp;amp;配置Repository 首先需要创建一个以 username.GitHub.io 命名的 Repository。注意替换 username为你的用户名。
+创建好 Repository 后按正常的提交代码的流程将站点文件提交到 master 分支。
+如果操作正确而且如果你不需要绑定域名的话，现在你就可以通过访问 username.github.io 访问你的网站了。</description>
+    </item>
+    
+    <item>
+      <title>彻底弄懂 MySQL 事务的隔离级别</title>
+      <link>https://wxxxcxx.com/post/mysql-transaction-isolation-level/</link>
+      <pubDate>Mon, 17 Sep 2018 23:03:31 +0800</pubDate>
+      
+      <guid>https://wxxxcxx.com/post/mysql-transaction-isolation-level/</guid>
+      <description>前言 事务隔离级别是数据库管理系统中的一个重要概念，用于控制并发执行事务时的隔离程度。M选择适当的事务隔离级别对于确保数据的一致性和并发控制非常重要。根据具体的业务需求和数据库性能要求，需要综合考虑选择合适的隔离级别。
+什么是脏读、不可重复读、幻读 思考一个问题：一张表中有一条记录。事务A会对这条记录进行修改。事务B在事务A修改的过程中一直读取这条记录。那么B读到的记录回事什么样的呢？
+脏读
+当A事务修改了这条记录但是未提交时，如果B事务能够读到A修改过的记录值，这总情况就是发生的脏读。
+不可重复读
+如果B事务能够在A提交事务前读到未修改过的值，并且能在A事务提交后读取到修改过的值——两次读到的值不一致，这就是不可重复读
+幻读
+当B事务使用 select count(*) 读取一张表的时候，如果A事务对这张表进行了增加或删除，如果在B事务中读到的值不一致那么说明发生了幻读。
+MySQL 事务隔离级别 MySQL事务拥有四种隔离级别：
+读未提交（Read Uncommitted）：允许一个事务读取另一个未提交的事务所做的修改，可能导致脏读问题。 读已提交（Read Committed）：保证一个事务只能读取到已经提交的事务所做的修改，避免了脏读问题。 可重复读（Repeatable Read）：保证一个事务在执行期间多次读取同一数据时，能够得到一致的结果，避免了不可重复读问题。 串行化（Serializable）：最高隔离级别，确保并发执行的事务之间完全隔离，避免了幻读问题。 </description>
+    </item>
+    
+    
+    
+    <item>
+      <title>Tags</title>
+      <link>https://wxxxcxx.com/tags/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>https://wxxxcxx.com/tags/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>
